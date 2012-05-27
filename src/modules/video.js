@@ -1,3 +1,60 @@
+// Initialize your application here. http://weblog.bocoup.com/organizing-your-backbone-js-application-with-modules/
+//src/app.js
+
+jQuery(function($) {
+
+    var app = {
+     // Create this closure to contain the cached modules
+     module: function() {
+        // Internal module cache.
+        var modules = {};
+
+        // Create a new module reference scaffold or load an
+        // existing module.
+        return function(name) {
+          // If this module has already been created, return it.
+          if (modules[name]) {
+            return modules[name];
+          }
+
+          // Create a module and save it under this name
+          return modules[name] = { Views: {} };
+        };
+      }()
+    };
+
+});
+
+
+
+
+
+//file src/module/video.js
+(function(Video) {
+
+//Define Video
+    Video.Model = Backbone.Model.extend({
+        initialize: function() {
+         // Add a nested messages collection
+         this.set({ messages: new Message.List() });
+         };
+         defaults: {
+       };
+     });
+     
+
+//Define a friend list
+    Video.List = Backbone.Collection.extend({
+       model: Video.Model
+     });     
+     
+
+})(app.module("Video"));
+
+
+
+
+
 $('document').ready(function() {
     var MAP_THUMB_WIDTH = '200';
     var ARRAY_ALBUMS = [];
@@ -283,3 +340,62 @@ $('document').ready(function() {
     
     getAllAlbumsRequest();
 });
+
+
+
+
+<script id="tmplListVideo" type="text/x-jquery-tmpl">
+    <div class="video">
+    	<b>${title}</b><br/>${description}<br/>${date}
+    	<div class="thumbnail"><img src="${url_thumbnail}"></div>
+    	<div class="video-links">
+    		<a href="#delete-${id}" name="delete-${id}" class="delete-video" data-id="${id}">delete</a>&nbsp;
+    		<a href="#edit-${id}" name="edit-${id}" class="like-video" data-id="${id}">like (залайкало: ${number_of_likes})</a>&nbsp;
+    		<a href="#view-${id}" name="view-${id}" class="view-video" data-id="${id}">view</a>
+    	</div>
+    	<div class="view-video-block"></div>
+    </div>
+</script>  
+
+
+<script id="albumsTemplate" type="text/x-jquery-tmpl"> 
+    <div class="album">
+		<b>${title}</b><br/>${description}<br/>${date}
+		<div><img src="${url_thumbnail}"></div>
+		<div class="album-links">
+			<a href="#delete-${id}" namte="delete-${id}" class="delete-album" data-id="${id}">delete</a>&nbsp;
+			<a href="#edit-${id}" name="edit-${id}" class="edit-album" data-id="${id}">edit</a>&nbsp;
+			<a href="#view-${id}" name="view-${id}" class="view-album" data-id="${id}">view album</a>
+			<a href="#add-${id}" name="add-${id}" class="add-video" data-id="${id}">add video</a>
+		</div>
+		<div class="video-tools" style="margin:10px 0 0 20px;">
+			<div class="edit-album-block"></div>
+			<div class="add-video-block"></div>
+			<div class="list-video"></div>
+		</div>
+	</div>
+</script>
+
+<script id="createAlbumsTemplate" type="text/x-jquery-tmpl"> 
+	<form class="create-album" action="">
+		<input type="text" id="videoid" placeholder="enter video id" /><br/>
+		<input type="text" id="videotitle" placeholder="enter video title" /><br/>
+		<textarea id="videodesc">add description</textarea><br/>
+		<input type="submit" value="Create album" />
+	</form>
+</script>
+
+<script id="tmplAddVideo" type="text/x-jquery-tmpl"> 
+	<form class="form-add-video" action="">
+		<input type="text" id="videoid" placeholder="enter video id" /><br/>
+		<input type="submit" value="add video" />
+	</form>
+</script>
+
+<script id="editAlbumsTemplate" type="text/x-jquery-tmpl"> 
+	<form id="edit" action="">
+		<input type="text" id="videotitle" placeholder="${title}" /><br/>
+		<textarea id="videodesc" placeholder="${description}"></textarea><br/>
+		<input type="submit" value="edit title, description" />
+	</form>
+</script>
