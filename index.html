@@ -6,19 +6,33 @@
 <title>Example</title>
 <link rel="stylesheet" href="assets/css/main.css">
 
+<script type="text/template" id="AllAblumsViewTmpl" > 
+    <a href="#" class="createAlbum">create album</a>&nbsp;
+    <div id="myCreateAlbumViewHtml"></div>
+	<div id="myAlbumsViewHtml"></div>
+</script>
+
 
 <script type="text/template" id="myAlbumViewTmpl" > 
-    <div style="margin-top:10px;">
 		<b><%= title %></b><br/><%= description %><br/><%= created_on %>
-        <div><img src="<%= thumbnail %>"></div>
+        <div><img src="<%= thumbnail_video.thumbnails.thumbnail[1]._content %>"></div>
         <div class="album-links">
-        	<a href="#delete-<%= id %>" namte="delete-<%= id %>" class="deleteAlbum" data-id="<%= id %>">del</a>&nbsp;
-        	<a href="#edit-<%= id %>" name="edit-<%= id %>" class="editAlbum" data-id="<%= id %>">edit</a>&nbsp;
-        	<a href="#view-<%= id %>" name="view-<%= id %>" class="viewAlbum" data-id="<%= id %>">view</a>
-        	<a href="#add-<%= id %>" name="add-<%= id %>" class="addVideo" data-id="<%= id %>">add video</a>
+        	<a href="#" class="deleteAlbum">del</a>&nbsp;
+        	<a href="#" class="editAlbum">edit</a>&nbsp;
+        	<a href="#" class="viewAlbum">view</a>
+        	<a href="#" class="addVideo">add video</a>
         </div>
-	</div>
 </script>
+
+<script type="text/template" id="myCreateAlbumViewTmpl"> 
+	<form action="">
+		<input type="text" id="id" placeholder="enter video id" /><br/>
+		<input type="text" id="title" placeholder="enter video title" /><br/>
+		<textarea id="videodesc">add description</textarea><br/>
+		<input type="submit" class="createAlbumSubmit" value="Create album" />
+	</form>
+</script>
+
 
 
 </head>
@@ -26,7 +40,7 @@
 
 <body>
 
-	<div id="myAlbumsViewHtml"></div>
+	<div id="AllAblumsViewHtml"></div>
 
 
     <script src="assets/js/libs/jquery-1.7.1.min.js"></script>
