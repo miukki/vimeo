@@ -1,3 +1,9 @@
+http://habrahabr.ru/post/118782/
+http://backbonejs.org/docs/todos.html
+http://documentcloud.github.com/backbone/docs/backbone.html
+http://backbonetutorials.com/what-is-a-collection/
+
+
 // Initialize your application here. http://weblog.bocoup.com/organizing-your-backbone-js-application-with-modules/
 //src/app.js
 
@@ -358,23 +364,6 @@ $('document').ready(function() {
 </script>  
 
 
-<script id="albumsTemplate" type="text/x-jquery-tmpl"> 
-    <div class="album">
-		<b>${title}</b><br/>${description}<br/>${date}
-		<div><img src="${url_thumbnail}"></div>
-		<div class="album-links">
-			<a href="#delete-${id}" namte="delete-${id}" class="delete-album" data-id="${id}">delete</a>&nbsp;
-			<a href="#edit-${id}" name="edit-${id}" class="edit-album" data-id="${id}">edit</a>&nbsp;
-			<a href="#view-${id}" name="view-${id}" class="view-album" data-id="${id}">view album</a>
-			<a href="#add-${id}" name="add-${id}" class="add-video" data-id="${id}">add video</a>
-		</div>
-		<div class="video-tools" style="margin:10px 0 0 20px;">
-			<div class="edit-album-block"></div>
-			<div class="add-video-block"></div>
-			<div class="list-video"></div>
-		</div>
-	</div>
-</script>
 
 <script id="createAlbumsTemplate" type="text/x-jquery-tmpl"> 
 	<form class="create-album" action="">

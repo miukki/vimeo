@@ -6,21 +6,20 @@
 <title>Example</title>
 <link rel="stylesheet" href="assets/css/main.css">
 
-<script type="text/template" id="search_template">
-    <h1><%= title %></h1>
-    <label><%= search_label %></label><input type="text" id="search_input" placeholder="Search for" />
-    <input type="button" id="search_button" value="Search"  />
+
+<script type="text/template" id="myAlbumsViewTmpl" > 
+    <div class="album">
+		<b><%= title %></b><br/><%= description %><br/><%= date %>
+	</div>
 </script>
+
 
 </head>
 
 
 <body>
-    <div id="search_container"></div>
 
-
-	<div id="totalDesc"></div>
-	<div id="listAlbums"></div>
+	<div id="myAlbumsViewHtml"></div>
 
 
     <script src="assets/js/libs/jquery-1.7.1.min.js"></script>

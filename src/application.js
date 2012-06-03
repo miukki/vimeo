@@ -10,7 +10,7 @@
             error: options.error
         };
 
-        if (model.model == Album && method == 'read') {
+        if (model.model == AlbumsModel && method == 'read') {
             params.data = {
                 method: "albums.getAll", 
                 params: {"user_id": options.userId}
@@ -21,63 +21,54 @@
     
     AlbumsModel = Backbone.Model.extend({
         defaults: {
-            video_sort_method: '',
-            created_on: '',
-            title: '',
-            url: '',
-            id: '',
-            total_videos: '',
-            description: '',
-            thumbnail_video: {},
+            title: 'title default',
         },
         validate: function(){
         },
         initialize: function(){
         }
     });
+    var myAlbumsModel = new AlbumsModel({ title: "title", description: 'description', date: 'date' });
     
     AlbumsCollection = Backbone.Collection.extend({
+        model: AlbumsModel,
         initialize: function(){},
         silent: true,
-        model: AlbumsModel,
         parse: function(resp, xhr) {
           return resp.albums.album;
         }
     });
     
-    var myAlbumsCollection = new AlbumsCollection([]);
-    myAlbumsCollection.reset();
+    var myAlbumsCollection = new AlbumsCollection;
+
     myAlbumsCollection.fetch({
-        //add: false,
         userId: userId,
         success: function(){
-            console.log("user_albums.fetch succeeded")
+            console.log("myAlbumsCollection.fetch succeeded")
         }
     });
     
-    console.log(myAlbumCollection.models);
+    console.log(myAlbumsCollection.get(0));
     
-    var myAlbumsView = Backbone.View.extend({
-            template: _.template($('#myAlbumsView').html(), variables),
+    AlbumsView = Backbone.View.extend({
+            model: AlbumsModel,
+            template: _.template($('#myAlbumsViewTmpl').html()),
             initialize: function(){
+                console.log('AlbumsView model initialize');
                 this.render();
             },
             render: function(){
-                var variables = { };
-                //this.$el
                 $(this.el).html(this.template(this.model.toJSON()));
-                
             },
             events: {
-                "click input[type=button]": "doSearch" 
+                "click .delete-album": "deleteAlbum"
             },
-            doSearch: function(event){
-                //console.log( "Search for " + $('#search_input').val() );
+            deleteAlbum: function(event){
+                console.log( "deleteAlbum");
             }
         });    
-    var app_view = new AppView({ el: $('#search_container') });
+    var myAlbumsView = new AlbumsView({ model: myAlbumsModel, el: $('#myAlbumsViewHtml') });
         
-    
     
     /*example code*/
     AppModel = Backbone.Model.extend({
