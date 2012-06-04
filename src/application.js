@@ -79,8 +79,9 @@
             //console.log('1');
             //console.log(this.$el.find('#id').val());
             this.model.set({title: this.$el.find('#title').val(), description: this.$el.find('textarea').val(), video_id: this.$el.find('#id').val()});
-            console.log(this.model.isNew());
+            console.log('this.model.isNew()', this.model.isNew());
             this.model.save({success: function(){
+                console.log('reloadAlbums()');
                 reloadAlbums();
             }});
         }        
