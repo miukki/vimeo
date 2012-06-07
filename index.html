@@ -14,13 +14,15 @@
 
 
 <script type="text/template" id="myAlbumViewTmpl" > 
-		<b><%= title %></b><br/><%= description %><br/><%= created_on %>
+		<div class="editTitle"><%= title %></div>
+		<div class="editDescription"><%= description %></div>
+		<%= created_on %>
         <div><img src="<%= thumbnail_video.thumbnails.thumbnail[1]._content %>"></div>
         <div class="album-links">
         	<a href="#" class="deleteAlbum">del</a>&nbsp;
         	<a href="#" class="editAlbum">edit</a>&nbsp;
         	<a href="#" class="viewAlbum">view</a>
-        	<a href="#" class="addVideo">add video</a>
+        	<a href="#" class="addVideo">add video</a><div class="addVideoForm"></div>
         </div>
 </script>
 
@@ -31,6 +33,19 @@
 		<textarea id="videodesc">add description</textarea><br/>
 		<input type="submit" class="createAlbumSubmit" value="Create album" />
 	</form>
+</script>
+
+<script type="text/template" id="myAddVideoTmpl"> 
+	<form >
+		<input type="text" id="videoid" placeholder="enter video id" /><br/>
+		<input type="submit" class="addVideoSubmit" value="add video" />
+	</form>
+</script>
+
+<script type="text/template" id="myVideoViewTmpl">
+    <div>
+    	<b><%= title %></b><br/><%= description %><br/>${date}
+    </div>
 </script>
 
 

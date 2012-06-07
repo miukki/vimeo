@@ -2,6 +2,7 @@
     var userId = 9580389;
     
     Backbone.sync = function(method, model, options) {
+        console.log('sync', method, JSON.stringify(model))
         var params = {
             url: "http://new.undev.ru/vimeo/api.json",
             type: 'POST', 
@@ -10,14 +11,14 @@
             error: options.error
         };
 
-        if (method == 'read') {
+        if (model instanceof AlbumsCollection && method == 'read') {
             params.data = {
                 method: "albums.getAll", 
                 params: {"user_id": options.userId}
             }
         };
         
-        if (method == 'delete') {
+        if (model instanceof AlbumsModel && method == 'delete') {
             params.data = {
                 method: "albums.delete", 
                 params: {
@@ -26,7 +27,7 @@
             }
         };
 
-        if (method == 'create') {
+        if (model instanceof AlbumsModel && method == 'create') {
             params.data = {
                 method: "albums.create", 
                 params: {
@@ -36,12 +37,46 @@
                 }
             }
         };
+        if (model instanceof AlbumsModel && method == 'update') {
+            params.data = {
+                method: "albums.setTitle", 
+                params: {
+                    album_id: model.id,
+                    title: model.get('title')
+                }
+            }
+        };
+
+        if (model instanceof VideoModel && method == 'create') {
+            params.data = {
+                method: "albums.addVideo", 
+                params: {
+                    album_id: model.id,
+                    video_id: model.get('video_id')
+                }
+            }
+        };
+        
+        
 
         
         return $.ajax(params);
     };
     
+    VideoModel = Backbone.Model.extend({
+        human_name: "VideoModel",
+        defaults: {
+        },
+        validate: function(){
+        },
+        initialize: function(){
+            console.log('VideoModel');
+        }        
+
+    });
+
     AlbumsModel = Backbone.Model.extend({
+        human_name: "AlbumsModel",
         defaults: {
             title: 'title default',
         },
@@ -53,6 +88,7 @@
     });
     
     AlbumsCollection = Backbone.Collection.extend({
+        human_name: "AlbumsCollection",
         model: AlbumsModel,
         initialize: function(){},
         silent: true,
@@ -75,14 +111,27 @@
         events: {
             "click .createAlbumSubmit": "createAlbumSubmit"
         },
-        createAlbumSubmit: function(){
+        createAlbumSubmit: function(event){
+            event.preventDefault();
             this.model.set({title: this.$el.find('#title').val(), description: this.$el.find('textarea').val(), video_id: this.$el.find('#id').val()});
-            console.log('this.model.isNew()', this.model.isNew());
-            this.model.save(this.model, {success: function(){ reloadAlbums(); }});
+            this.model.save(this.model.attributes, {success: function(){ reloadAlbums(); }});
         }        
+    });
+    VideoView = Backbone.View.extend({
+        template: _.template($('#myVideoViewTmpl').html()),
+        initialize: function(){
+            this.render();
+        },
+        render: function(){
+            $(this.el).empty();
+            $(this.el).html(this.template(this.model.toJSON()));
+            console.log(this.model.toJSON());
+        }
+        
     });
 
     AlbumView = Backbone.View.extend({
+        addvideotmpl: _.template($('#myAddVideoTmpl').html()),
         template: _.template($('#myAlbumViewTmpl').html()),
         initialize: function(){
             this.render();
@@ -93,9 +142,11 @@
         },
         events: {
            "click .deleteAlbum": "deleteAlbum",
-           "click .editAlbum": "editAlbum",
+           "click .editTitle": "editTitle",
            "click .viewAlbum": "viewAlbum",
-           "click .addVideo": "addVideo"
+           "click .addVideo": "addVideo",
+           "click .addVideoSubmit": "addVideoSubmit"
+           
         },
         deleteAlbum: function(){
             var that = this;
@@ -103,16 +154,44 @@
                 that.trigger("deleted");
             }});
         },
-        editAlbum: function(event){
-           console.log('editAlbum');
+        editTitle: function(event){
+            console.log(this.model.get('title'));
+            var $input = $("<input />").attr({
+                  class: "titleField",
+                  placeholder: this.model.get('title'),
+                  type: 'text'});
+                  
+           $(this.el).find('.editTitle').html('').append($input);
+           $input.focus();
+           var model = this.model;
+           $input.bind('blur', function(){ 
+               console.log('$(this).val()', $(this).val()); 
+               model.save({title: $(this).val(), success: function(){ console.log('model.save succeeded')} })  });
+           
         },
-        viewAlbum: function(event){
+        viewAlbum: function(){
            console.log('viewAlbum');
         },
-        addVideo: function(event){
-           console.log('addVideo');
+        addVideo: function(){
+            this.$('.addVideoForm').html(this.addvideotmpl({}));
+        },
+        addVideoSubmit: function(event){
+            event.preventDefault();
+            var myVideoModel = new VideoModel;
+            myVideoModel.set({video_id: this.$('#videoid').val()});
+            myVideoModel.save(myVideoModel.attributes, {success: function(){ reloadAlbums(); }});
+            console.log('myVideoModel.isNew()', this.model.isNew());
+            var $div = $('<div></div>');
+            $(this.el).append($div);
+            var myVideoView = new VideoView({ model: myVideoModel, el: $div });
+
+            
         }
+
+        
+        
     });
+    
     
     AlbumsView = Backbone.View.extend({
             template: _.template($('#AllAblumsViewTmpl').html()),
@@ -124,7 +203,6 @@
                 $(this.el).empty();
                 $(this.el).html(this.template({}));
                 _.each(this.collection.models, function(album) {
-                    console.log('album', album);
                     var $div = $('<div></div>');
                     $(this.el).append($div);
                     var myAlbumView = new AlbumView({ model: album, el: $div });
